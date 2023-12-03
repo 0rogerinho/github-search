@@ -1,38 +1,32 @@
+import { useIsFocused } from '@react-navigation/native';
 import { RecentCard } from '../ui/RecentCard';
 import styled from 'styled-components/native';
-
-const data = [
-  {
-    name: 'Natan Gabriel Almeida de Castro',
-    login: '@NatanCastro',
-    location: 'San Francisco, wa',
-    img: '../../../assets/favicon.png',
-  },
-  {
-    name: 'Octocat',
-    login: '@Octocat',
-    location: 'San Francisco, wa',
-    img: '../../../assets/favicon.png',
-  },
-  {
-    name: 'Octocat',
-    login: '@Octocat',
-    location: 'San Francisco, wa',
-    img: '../../../assets/favicon.png',
-  },
-];
+import React from 'react';
+import { useStorage } from '../../hooks/useStorage';
+import { IUser } from '../../@types/user';
 
 export const Recent = () => {
+  const [dataUser, setDataUser] = React.useState<IUser[] | null>(null)
+
+  const {getUser} = useStorage()
+  const focus = useIsFocused()
+
+  React.useEffect(() => {
+  async  function test (){
+     const data = await getUser('@user')
+     setDataUser(data)
+    }
+
+    test()
+   },[focus])
+
   return (
     <MainView>
       <Text>Recent:</Text>
-      {data.map(({ name, login, location, img }, index) => (
+      {dataUser?.map((data) => (
         <RecentCard
-          key={index}
-          name={name}
-          login={login}
-          location={location}
-          img={img}
+          key={data.id}
+          {...data}
         />
       ))}
     </MainView>

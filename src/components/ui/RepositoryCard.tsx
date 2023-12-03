@@ -2,28 +2,23 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { colors } from '../../../themesConfig';
 import { FontAwesome } from '@expo/vector-icons';
+import { IRepositories } from '../../@types/repositories';
 
-export type IRepositoryCardProps = {
-  name: string;
-  language: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-};
-
-export const RepositoryCard = ({...props}: IRepositoryCardProps) => {
+export const RepositoryCard = (props: IRepositories) => {
   return (
     <ViewMain>
       <ViewRowBetween>
         <Title>{props.name}</Title>
 
-        <ViewRow>
+        <ViewRow style={props.language === null && { display: 'none' }}>
           <FontAwesome name="circle" size={10} color={colors.primary} />
           <Title>{props.language}</Title>
         </ViewRow>
       </ViewRowBetween>
 
-      <Description>{props.description}</Description>
+      <Description style={props.description === null && { display: 'none' }}>
+        {props.description}
+      </Description>
 
       <ViewRowBetween>
         <ViewRow>
@@ -31,7 +26,7 @@ export const RepositoryCard = ({...props}: IRepositoryCardProps) => {
           <Text>{props.created_at}</Text>
         </ViewRow>
 
-        <ViewRow>
+        <ViewRow style={props.updated_at === null && {display: 'none'}}>
           <FontAwesome name="circle" size={10} color="#00FF38" />
           <Text>{props.updated_at}</Text>
         </ViewRow>
@@ -63,7 +58,9 @@ const Text = styled.Text`
 `;
 
 const Description = styled.Text`
+  width: 100%;
   font-size: 10px;
+  margin: 5px 0px;
   color: #dee7ff;
 `;
 

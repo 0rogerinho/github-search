@@ -3,29 +3,26 @@ import { colors } from '../../../themesConfig';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native';
+import { INavigationProps, IUserRouteProps } from '../../@types/stack';
+import { IUser } from '../../@types/user';
 
-type IRecentCardProps = {
-  name: string;
-  login: string;
-  location: string;
-  img?: string
-};
-
-export const RecentCard = ({name,login,location,img}: IRecentCardProps) => {
-  const {navigate} = useNavigation<any>()
+export const RecentCard = (props: IUser) => {
+  const navigation = useNavigation<INavigationProps>();
   return (
-    <TouchableOpacity onPress={() => navigate('user')}>
-    <MainView>
-      <Avatar>
-        <Image source={require('../../../assets/favicon.png')} />
-      </Avatar>
-      <TextName>{name}</TextName>
-      <TextLogin>{login}</TextLogin>
-      <View>
-        <Feather name="map-pin" size={16} color="white" />
-        <Text>{location}</Text>
-      </View>
-    </MainView>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('User')} 
+    >
+      <MainView>
+        <Avatar>
+          <Image source={require('../../../assets/favicon.png')} />
+        </Avatar>
+        <TextName>{props.name}</TextName>
+        <TextLogin>{props.login}</TextLogin>
+        <View>
+          <Feather name="map-pin" size={16} color="white" />
+          <Text>{props.location}</Text>
+        </View>
+      </MainView>
     </TouchableOpacity>
   );
 };
