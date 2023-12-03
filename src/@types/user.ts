@@ -8,4 +8,5 @@ export interface IUser {
   followers: number;
   following: number;
   repos_url: string;
+  load?: boolean
 };

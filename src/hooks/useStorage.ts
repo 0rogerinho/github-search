@@ -16,21 +16,20 @@ export const useStorage = () => {
   const saveUser = async (key:string, value:IUser) => {
     try {
       const user: IUser[] = await getUser(key);
+
+      if(user.length === 10){
+        user.shift()
+      }
       
       if(!user.some((data)=> data.login === value.login)){
         user.unshift(value)
       }
 
-      if(user.length >= 8){
-        user.shift()
-      }
+      console.log(user.length === 9);
 
-      console.log(user.map(({login})=> login))
+       console.log(user.map(({login})=> login))
       
-
       const newUser =  user
-
-      console.log(newUser);
 
       await AsyncStorage.setItem(key, JSON.stringify(newUser));
     } catch (error) {

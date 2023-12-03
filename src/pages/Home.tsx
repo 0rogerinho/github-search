@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
+import { ActivityIndicator, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Recent } from '../components';
@@ -7,31 +7,38 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { INavigationDataProps } from '../@types/stack';
+import { IUser } from '../@types/user';
 
 const url_user = 'https://api.github.com/users/';
+const token = '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'
+
+const instance = axios.create({headers: {Authorization: `Bearer ${token}`}});
 
 const android = Platform.OS === 'android';
 
 export const Home = () => {
   const [search, setSearch] = React.useState('');
+  const [Load, setLoad] = React.useState(false);
 
   const useNavigate = useNavigation<INavigationDataProps>();
 
   const handlePress = React.useCallback(async () => {
     try {
-      console.log(search);
-
-      const getDataUser = await axios.get(`${url_user}${search}`);
+      setLoad(true)
+      const getDataUser = await instance.get<IUser>(`${url_user}${search}`);
 
       if (getDataUser?.data) {
-        console.log('passou primeiro if');
-        const getDataRepos = await axios.get(getDataUser?.data.repos_url);
+        const getDataRepos = await instance.get(getDataUser?.data.repos_url);
         useNavigate.navigate('User', {
-          data: getDataUser?.data,
+          dataUser: getDataUser?.data,
           dataRepos: getDataRepos?.data,
         });
       }
+
+      setLoad(false)
+
     } catch (error) {
+      setLoad(false)
       console.log(error);
     }
   }, [search]);
@@ -49,7 +56,7 @@ export const Home = () => {
           />
         </Separator>
         <ButtonSearch onPress={handlePress}>
-          <TextSearch>Search</TextSearch>
+          {Load ? <ActivityIndicator color='white' /> : <TextSearch>Search</TextSearch>}
         </ButtonSearch>
       </ViewField>
       <Recent />
@@ -61,7 +68,7 @@ export const Home = () => {
 const SafeAreaView = styled.SafeAreaView`
   flex: 1;
   background-color: #141d2f;
-  padding-top: ${android ? '50px' : '20px'};
+  padding-top: ${android ? '80px' : '20px'};
   align-items: center;
   gap: 20px;
 `;
@@ -87,6 +94,9 @@ const TextField = styled.TextInput`
 `;
 
 const ButtonSearch = styled.TouchableOpacity`
+  justify-content: center;
+  align-items: center;
+  width: 70px;
   background-color: #0079ff;
   padding: 10px 10px;
   border-radius: 6px;

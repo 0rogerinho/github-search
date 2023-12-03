@@ -4,7 +4,7 @@ import { IRepositories } from './repositories';
 
 export type IRootStackParamList = {
   Home: undefined;
-  User: { data: IUser, dataRepos: IRepositories[] };
+  User: { dataUser: IUser, dataRepos: IRepositories[] };
 };
 
 export type IRootStackParamNav = {

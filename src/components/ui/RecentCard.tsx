@@ -1,27 +1,61 @@
 import styled from 'styled-components/native';
 import { colors } from '../../../themesConfig';
 import { Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
-import { INavigationProps, IUserRouteProps } from '../../@types/stack';
 import { IUser } from '../../@types/user';
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import axios from 'axios';
+import { IRepositories } from '../../@types/repositories';
+import { INavigationDataProps } from '../../@types/stack';
+import { useNavigation } from '@react-navigation/native';
+
+const token =
+  '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';
+
+const instance = axios.create({
+  headers: { Authorization: `Bearer ${token}` },
+});
 
 export const RecentCard = (props: IUser) => {
-  const navigation = useNavigation<INavigationProps>();
+  const [load, setLoad] = React.useState(false);
+
+  const navigation = useNavigation<INavigationDataProps>();
+
+  const handlePress = React.useCallback(async () => {
+    setLoad(true);
+    try {
+      const getDataRepos = await instance.get(props.repos_url);
+      navigation.navigate('User', {
+        dataUser: props,
+        dataRepos: getDataRepos?.data,
+      });
+    } finally {
+      setLoad(false);
+    }
+  }, []);
+
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('User')} 
-    >
+    <TouchableOpacity onPress={handlePress}>
       <MainView>
-        <Avatar>
-          <Image source={require('../../../assets/favicon.png')} />
-        </Avatar>
-        <TextName>{props.name}</TextName>
-        <TextLogin>{props.login}</TextLogin>
-        <View>
-          <Feather name="map-pin" size={16} color="white" />
-          <Text>{props.location}</Text>
-        </View>
+        {!load && (
+          <>
+            <Avatar source={{ uri: props.avatar_url }} />
+            <TextName ellipsizeMode="tail" numberOfLines={1}>
+              {props.name === null ? "No Name" : props.name}
+            </TextName>
+            <TextLogin ellipsizeMode="tail" numberOfLines={1}>
+              @{props.login}
+            </TextLogin>
+            <View>
+              <Feather name="map-pin" size={16} color="white" />
+              <Text ellipsizeMode="tail" numberOfLines={1}>
+                {props.location === null ? 'No Location' : props.location}
+              </Text>
+            </View>
+          </>
+        )}
+
+        {load && <ActivityIndicator color="white" />}
       </MainView>
     </TouchableOpacity>
   );
@@ -29,37 +63,36 @@ export const RecentCard = (props: IUser) => {
 
 const MainView = styled.View`
   width: 100%;
+  height: 72px;
   flex-direction: row;
   background-color: ${colors.backgroundSecondary};
   border-radius: 6px;
-  justify-content: space-between;
+  gap: 15px;
   align-items: center;
   padding: 16px 14px;
+  margin-bottom: 10px;
 `;
 
-const Avatar = styled.View`
-  width: 40px;
-  height: 40px;
-  padding: 5px;
-  background-color: white;
-  object-fit: contain;
-  border-radius: 100px;
-`;
-
-const Image = styled.Image`
+const ActivityIndicator = styled.ActivityIndicator`
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+`;
+
+const Avatar = styled.Image`
+  width: 45px;
+  height: 45px;
+  border-radius: 100px;
+  object-fit: cover;
 `;
 
 const TextName = styled.Text`
-  width: 90px;
-  font-size: 10px;
+  width: 100px;
+  font-size: 12px;
   font-weight: 600;
   color: white;
 `;
 const TextLogin = styled.Text`
-  font-size: 10px;
+  width: 80px;
+  font-size: 14px;
   color: ${colors.primary};
 `;
 const View = styled.View`
@@ -69,5 +102,7 @@ const View = styled.View`
 `;
 
 const Text = styled.Text`
+  width: 70px;
+  font-size: 12px;
   color: white;
 `;

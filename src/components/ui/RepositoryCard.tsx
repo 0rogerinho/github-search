@@ -5,14 +5,33 @@ import { FontAwesome } from '@expo/vector-icons';
 import { IRepositories } from '../../@types/repositories';
 
 export const RepositoryCard = (props: IRepositories) => {
+
+  function formatDate(date: string) {
+    const option: Intl.DateTimeFormatOptions = {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    };
+    const dataObj = new Date(date);
+    return dataObj.toLocaleDateString('eng', option);
+  }
+
   return (
     <ViewMain>
       <ViewRowBetween>
-        <Title>{props.name}</Title>
+        <Title ellipsizeMode="tail" numberOfLines={2}>
+          {props.name}
+        </Title>
 
-        <ViewRow style={props.language === null && { display: 'none' }}>
-          <FontAwesome name="circle" size={10} color={colors.primary} />
-          <Title>{props.language}</Title>
+        <ViewRow>
+          <FontAwesome
+            name="circle"
+            size={10}
+            color={props.language === null ? 'red' : colors.primary}
+          />
+          <Title>
+            {props.language === null ? 'No Language' : props.language}
+          </Title>
         </ViewRow>
       </ViewRowBetween>
 
@@ -23,12 +42,16 @@ export const RepositoryCard = (props: IRepositories) => {
       <ViewRowBetween>
         <ViewRow>
           <FontAwesome name="circle" size={10} color="#9CA3A0" />
-          <Text>{props.created_at}</Text>
+          <Text>{formatDate(props.created_at)}</Text>
         </ViewRow>
 
-        <ViewRow style={props.updated_at === null && {display: 'none'}}>
-          <FontAwesome name="circle" size={10} color="#00FF38" />
-          <Text>{props.updated_at}</Text>
+        <ViewRow>
+          <FontAwesome
+            name="circle"
+            size={10}
+            color={props.updated_at === null ? 'red' : '#00FF38'}
+          />
+          <Text>{props.updated_at === null ? 'No Updated' : formatDate(props.updated_at)}</Text>
         </ViewRow>
       </ViewRowBetween>
     </ViewMain>
@@ -36,7 +59,6 @@ export const RepositoryCard = (props: IRepositories) => {
 };
 
 const ViewMain = styled.View`
-  max-width: 100%;
   width: 100%;
   background-color: ${colors.background};
   align-items: center;
@@ -47,6 +69,7 @@ const ViewMain = styled.View`
 `;
 
 const Title = styled.Text`
+  max-width: 180px;
   font-weight: 600;
   font-size: 14px;
   color: white;
@@ -59,7 +82,7 @@ const Text = styled.Text`
 
 const Description = styled.Text`
   width: 100%;
-  font-size: 10px;
+  font-size: 12px;
   margin: 5px 0px;
   color: #dee7ff;
 `;

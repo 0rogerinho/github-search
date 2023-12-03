@@ -1,89 +1,118 @@
 import styled from 'styled-components/native';
-import { Feather } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import { Feather, Entypo, AntDesign } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
-import { Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { INavigationProps, IUserRouteProps } from '../@types/stack';
 import { colors } from '../../themesConfig';
 import { RepositoryCard } from '../components/ui/RepositoryCard';
 import { useStorage } from '../hooks/useStorage';
-
+import { Platform } from 'react-native';
+import React from 'react';
+import { Modal } from 'react-native';
+import { ModalLink } from '../components/modal-link/ModalLink';
 const android = Platform.OS === 'android';
 
-const Statics = ({ title = 'test', text = 'test' }) => {
-  return (
-    <ViewStatic>
-      <Text>{title}</Text>
-      <Text>{text}</Text>
-    </ViewStatic>
-  );
-};
+const Statics = ({ title = 'test', text = 'test' }) => (
+  <ViewStatic>
+    <Title>{title}</Title>
+    <Text>{text}</Text>
+  </ViewStatic>
+);
 
+interface IReposModalProps {
+  name: string;
+  link: string;
+}
 
 export const User = () => {
-  const navigation = useNavigation<INavigationProps>()
-  const {params: {data, dataRepos}} = useRoute<IUserRouteProps>()
+  const [showModal, setShowModal] = React.useState(false);
+  const [modalRepo, setModalRepo] = React.useState<IReposModalProps | null>(
+    null,
+  );
 
-  const { saveUser } = useStorage()
+  const navigation = useNavigation<INavigationProps>();
+  const {
+    params: { dataUser, dataRepos },
+  } = useRoute<IUserRouteProps>();
+  console.log(dataRepos);
+
+  const { saveUser } = useStorage();
 
   async function handlePress() {
-   await saveUser('@user', data)
-    navigation.navigate('Home')
+    await saveUser('@user', dataUser);
+    navigation.navigate('Home');
   }
-  
-  
+
+  async function handleShowModal(index: number) {
+    const data = {
+      name: dataRepos[index].name,
+      link: dataRepos[index].html_url,
+    };
+    setModalRepo(data);
+    setShowModal(true);
+  }
+
   return (
     <SafeAreaView>
       <MainView>
-        <Title>User:</Title>
+        <Title>User: {dataUser.id}</Title>
+
         <ViewCard>
           <ViewCardUser>
-            <Avatar>
-              <Image source={require('../../assets/favicon.png')} />
-            </Avatar>
-            <View>
-              <TextLocation>id: {data.id}</TextLocation>
-              <TextName>{data.name}</TextName>
-            </View>
-            <TextLogin>{data.login}</TextLogin>
+            <Avatar source={{ uri: dataUser.avatar_url }} />
+            <TextName ellipsizeMode="tail" numberOfLines={2}>
+              {dataUser.name === null ? 'No Name' : dataUser.name}
+            </TextName>
+            <TextLogin>@{dataUser.login}</TextLogin>
             <ViewRowGap>
               <Feather name="map-pin" size={16} color="white" />
-              <TextLocation>{!data.location ? 'NaN' : data.location }</TextLocation>
+              <TextLocation ellipsizeMode="tail" numberOfLines={2}>
+                {!dataUser.location ? 'No Location' : dataUser.location}
+              </TextLocation>
             </ViewRowGap>
           </ViewCardUser>
+
           <ViewStatics>
             <Statics title="Repositories" text="50" />
             <Statics title="Followers" text="11247" />
             <Statics title="Following" text="38" />
           </ViewStatics>
+
           <ViewColumn>
-            <ViewRepositories>
+            <ViewBoxRepos>
               <Entypo name="book" size={20} color={colors.primary} />
-              <Text>Repositories</Text>
-              <AntDesign name="caretup" size={15} color="white" />
-            </ViewRepositories>
+              <Title>Repositories</Title>
+            </ViewBoxRepos>
           </ViewColumn>
-          <FlatList
-            style={{ maxHeight: 480 }}
-            data={dataRepos}
-            renderItem={(data) => (
-              <RepositoryCard
-                key={data.index}
-                name={data.item.name}
-                language={data.item.language}
-                description={data.item.description}
-                created_at={data.item.created_at}
-                updated_at={data.item.updated_at}
-              />
-            )}
-          />
+          {dataRepos.length >= 0 && (
+            <FlatList
+              style={{ maxHeight: 480 }}
+              data={dataRepos}
+              renderItem={(data) => (
+                <TouchableOpacity
+                  key={data.index}
+                  onPress={() => handleShowModal(data.index)}
+                >
+                  <RepositoryCard {...data.item} />
+                </TouchableOpacity>
+              )}
+            />
+          )}
         </ViewCard>
-        <TouchableOpacity onPress={handlePress}>
+      <TouchableOpacityReturn onPress={handlePress}>
           <Title>Return</Title>
-        </TouchableOpacity>
+      </TouchableOpacityReturn>
       </MainView>
+
+      {modalRepo && (
+        <Modal visible={showModal} transparent={true}>
+          <ModalLink
+            showModal={() => setShowModal(false)}
+            link={modalRepo?.name}
+            repoName={modalRepo?.name}
+          />
+        </Modal>
+      )}
     </SafeAreaView>
   );
 };
@@ -93,7 +122,6 @@ const SafeAreaView = styled.SafeAreaView`
   background-color: #141d2f;
   padding-top: ${android ? '50px' : '20px'};
   align-items: center;
-  justify-content: center;
   gap: 20px;
 `;
 
@@ -113,11 +141,12 @@ const Title = styled.Text`
 `;
 
 const Text = styled.Text`
-  font-size: 10px;
   color: white;
+  
 `;
 
 const ViewCard = styled.View`
+  max-height: 89%;
   background-color: ${colors.backgroundSecondary};
   border-radius: 10px;
   align-items: center;
@@ -131,30 +160,22 @@ const ViewStatic = styled.View`
   gap: 5px;
 `;
 
-const Avatar = styled.View`
-  width: 40px;
-  height: 40px;
-  padding: 5px;
-  background-color: white;
-  object-fit: contain;
+const Avatar = styled.Image`
+  width: 80px;
+  height: 80px;
   border-radius: 100px;
-`;
-
-const Image = styled.Image`
-  width: 100%;
-  height: 100%;
   object-fit: contain;
 `;
 
 const TextName = styled.Text`
   max-width: 100px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   color: white;
 `;
 
 const TextLogin = styled.Text`
-  font-size: 12px;
+  font-size: 14px;
   color: ${colors.primary};
 `;
 
@@ -169,8 +190,6 @@ const TextLocation = styled.Text`
   font-size: 12px;
   color: white;
 `;
-
-const View = styled.View``;
 
 const ViewCardUser = styled.View`
   width: 100%;
@@ -189,7 +208,7 @@ const ViewStatics = styled.View`
   padding: 20px;
 `;
 
-const ViewRepositories = styled.View`
+const ViewBoxRepos = styled.View`
   width: 100%;
   flex-direction: row;
   align-items: center;
@@ -197,8 +216,12 @@ const ViewRepositories = styled.View`
 `;
 
 const TouchableOpacity = styled.TouchableOpacity`
+  max-width: 100%;
+`;
+
+const TouchableOpacityReturn = styled.TouchableOpacity`
   width: 50%;
-  margin: auto;
+  margin:  auto;
   flex-direction: row;
   align-items: center;
   justify-content: center;
