@@ -14,20 +14,21 @@ interface IModalLinkProps {
 export const ModalLink = ({link, repoName, showModal}:IModalLinkProps) => {
   const handleLinkPress = () => {
     console.log(link);
-    showModal()
     Linking.openURL(link);
+    showModal()
   };
 
   return (
     <MainView>
       <ViewBox>
-      <Text>Access the repository {repoName}?</Text>
+      <Title>Access the repository</Title>
+      <Text>{repoName}</Text>
       <View>
         <TouchableOpacityYes  onPress={handleLinkPress}>
-            <Text>Yes</Text>
+            <Title>Yes</Title>
         </TouchableOpacityYes> 
         <TouchableOpacityNo onPress={() => showModal()}>
-            <Text>No</Text>
+            <Title>No</Title>
         </TouchableOpacityNo> 
       </View>
       </ViewBox>
@@ -51,10 +52,16 @@ const ViewBox = styled.View`
   gap: 20px;
 `
 
-const Text = styled.Text`
+const Title = styled.Text`
 color: white;
 font-size: 20px;
 font-weight: bold;
+`
+const Text = styled.Text`
+text-align: center;
+color: rgba(299,299,299, 0.50);;
+font-size: 16px;
+
 `
 
 const View = styled.View`
