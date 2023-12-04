@@ -1,8 +1,13 @@
 import React from 'react';
+// styled-components
 import styled from 'styled-components/native';
+// Config Colors
 import { colors } from '../../../themesConfig';
+// Icons
 import { FontAwesome } from '@expo/vector-icons';
-import { IRepositories } from '../../@types/repositories';
+// Types
+import { IRepositories } from '../../@types';
+
 
 export const RepositoryCard = (props: IRepositories) => {
 
@@ -30,7 +35,7 @@ export const RepositoryCard = (props: IRepositories) => {
             color={props.language === null ? 'red' : colors.primary}
           />
           <Title>
-            {props.language === null ? 'No Language' : props.language}
+            {props.language ?? 'No Language'}
           </Title>
         </ViewRow>
       </ViewRowBetween>

@@ -1,5 +1,8 @@
+// Async Storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IUser } from '../@types/user';
+// Types
+import { IUser } from '../@types';
+
 
 export const useStorage = () => {
   const getUser = async (key:string) => {
@@ -18,7 +21,7 @@ export const useStorage = () => {
       const user: IUser[] = await getUser(key);
 
       if(user.length === 10){
-        user.shift()
+        user.pop()
       }
       
       if(!user.some((data)=> data.login === value.login)){

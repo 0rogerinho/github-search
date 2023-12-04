@@ -1,6 +1,8 @@
-
+// React Native
 import { Linking } from "react-native"
+// Styled-Components
 import styled from "styled-components/native"
+//  Config Colors
 import { colors } from "../../../themesConfig";
 
 interface IModalLinkProps {
@@ -10,8 +12,9 @@ interface IModalLinkProps {
 }
 
 export const ModalLink = ({link, repoName, showModal}:IModalLinkProps) => {
-
   const handleLinkPress = () => {
+    console.log(link);
+    
     Linking.openURL(link);
   };
 

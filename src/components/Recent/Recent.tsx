@@ -1,26 +1,21 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { RecentCard } from '../ui/RecentCard';
-import styled from 'styled-components/native';
-import React from 'react';
-import { useStorage } from '../../hooks/useStorage';
-import { IUser } from '../../@types/user';
-import { FlatList, TouchableOpacity } from 'react-native';
-import axios from 'axios';
-import { INavigationDataProps } from '../../@types/stack';
+import React from 'react';  
+// React Native
+import { FlatList } from 'react-native';  
+// React Navigation
+import { useIsFocused } from '@react-navigation/native';  
+// styled-components
+import styled from 'styled-components/native';  
+// ui
+import { RecentCard } from '../ui/RecentCard';  
+// hooks
+import { useStorage } from '../../hooks';  
+// types
+import { IUser } from '../../@types';  
 
-// const url_user = 'https://api.github.com/users/';
-// const token =
-//   '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';
-
-// const instance = axios.create({
-//   headers: { Authorization: `Bearer ${token}` },
-// });
 
 export const Recent = () => {
   const [dataUser, setDataUser] = React.useState<IUser[] | null>(null);
-  // const [load, setLoad] = React.useState(false);
 
-  // const navigation = useNavigation<INavigationDataProps>();
   const { getUser } = useStorage();
   const focus = useIsFocused();
 
@@ -32,21 +27,6 @@ export const Recent = () => {
 
     test();
   }, [focus]);
-
-  // const handlePress = React.useCallback(async (index: number) => {
-  //   if (dataUser != null) {
-  //     setLoad(true);
-  //     try {
-  //       const getDataRepos = await instance.get(dataUser[index].repos_url);
-  //       navigation.navigate('User', {
-  //         data: dataUser[index],
-  //         dataRepos: getDataRepos?.data,
-  //       });
-  //     } finally {
-  //       setLoad(false);
-  //     }
-  //   }
-  // }, []);
 
   return (
     <MainView>

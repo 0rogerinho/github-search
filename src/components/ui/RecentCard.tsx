@@ -1,20 +1,20 @@
-import styled from 'styled-components/native';
-import { colors } from '../../../themesConfig';
-import { Feather } from '@expo/vector-icons';
-import { IUser } from '../../@types/user';
+// React
 import React from 'react';
+// React Native
 import { TouchableOpacity } from 'react-native';
-import axios from 'axios';
-import { IRepositories } from '../../@types/repositories';
-import { INavigationDataProps } from '../../@types/stack';
+// React Navigation
 import { useNavigation } from '@react-navigation/native';
-
-const token =
-  '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';
-
-const instance = axios.create({
-  headers: { Authorization: `Bearer ${token}` },
-});
+// style-components
+import styled from 'styled-components/native';
+// Icons
+import { Feather } from '@expo/vector-icons';
+// Config Colors
+import { colors } from '../../../themesConfig';
+// Types
+import { INavigationDataProps, IUser } from '../../@types';
+// Service
+import { getUserRepos } from '../../service';
+  
 
 export const RecentCard = (props: IUser) => {
   const [load, setLoad] = React.useState(false);
@@ -24,10 +24,10 @@ export const RecentCard = (props: IUser) => {
   const handlePress = React.useCallback(async () => {
     setLoad(true);
     try {
-      const getDataRepos = await instance.get(props.repos_url);
+      const dataRepos =  await getUserRepos(props.repos_url)
       navigation.navigate('User', {
         dataUser: props,
-        dataRepos: getDataRepos?.data,
+        dataRepos: dataRepos,
       });
     } finally {
       setLoad(false);
@@ -41,7 +41,7 @@ export const RecentCard = (props: IUser) => {
           <>
             <Avatar source={{ uri: props.avatar_url }} />
             <TextName ellipsizeMode="tail" numberOfLines={1}>
-              {props.name === null ? "No Name" : props.name}
+              {props.name ?? "No Name"}
             </TextName>
             <TextLogin ellipsizeMode="tail" numberOfLines={1}>
               @{props.login}
@@ -49,7 +49,7 @@ export const RecentCard = (props: IUser) => {
             <View>
               <Feather name="map-pin" size={16} color="white" />
               <Text ellipsizeMode="tail" numberOfLines={1}>
-                {props.location === null ? 'No Location' : props.location}
+                {props.location ?? 'No Location'}
               </Text>
             </View>
           </>

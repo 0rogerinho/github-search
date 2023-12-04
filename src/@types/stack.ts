@@ -1,6 +1,7 @@
-import { IUser } from './user';
+// Types
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { IRepositories } from './repositories';
+import { IUser } from './user';
 
 export type IRootStackParamList = {
   Home: undefined;

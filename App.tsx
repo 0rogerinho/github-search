@@ -1,11 +1,16 @@
+// routes
+import { Routes } from './src/routes';
+// react-navigation-native
 import { NavigationContainer } from '@react-navigation/native';
-import Routes from './src/Routes';
+// react-native-root-siblings
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 export default function App() {
   return (
     <NavigationContainer>
-
+      <RootSiblingParent>
         <Routes/>
+      </RootSiblingParent>
     </NavigationContainer>
   );
 }

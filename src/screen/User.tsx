@@ -1,28 +1,41 @@
-import styled from 'styled-components/native';
-import { Feather, Entypo, AntDesign } from '@expo/vector-icons';
-import { FlatList } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { INavigationProps, IUserRouteProps } from '../@types/stack';
-import { colors } from '../../themesConfig';
-import { RepositoryCard } from '../components/ui/RepositoryCard';
-import { useStorage } from '../hooks/useStorage';
-import { Platform } from 'react-native';
+// React
 import React from 'react';
-import { Modal } from 'react-native';
-import { ModalLink } from '../components/modal-link/ModalLink';
+// React Native
+import { Modal, FlatList, Platform } from 'react-native';
+// React Navigation
+import { useNavigation, useRoute } from '@react-navigation/native';
+// Icons
+import { Feather, Entypo } from '@expo/vector-icons';
+// Types
+import { INavigationProps, IUserRouteProps } from '../@types';
+// Style-Components
+import styled from 'styled-components/native';
+// Config Colors
+import { colors } from '../../themesConfig';
+// Hooks
+import { useStorage } from '../hooks';
+// Components
+import { ModalLink, RepositoryCard } from '../components';
+
+
 const android = Platform.OS === 'android';
 
-const Statics = ({ title = 'test', text = 'test' }) => (
-  <ViewStatic>
-    <Title>{title}</Title>
-    <Text>{text}</Text>
-  </ViewStatic>
-);
+interface IStatics {
+  title: string;
+  text: number;
+}
 
 interface IReposModalProps {
   name: string;
   link: string;
 }
+
+const Statics = ({ title, text}: IStatics) => (
+  <ViewStatic>
+    <Title>{title}</Title>
+    <Text>{text}</Text>
+  </ViewStatic>
+);
 
 export const User = () => {
   const [showModal, setShowModal] = React.useState(false);
@@ -61,21 +74,23 @@ export const User = () => {
           <ViewCardUser>
             <Avatar source={{ uri: dataUser.avatar_url }} />
             <TextName ellipsizeMode="tail" numberOfLines={2}>
-              {dataUser.name === null ? 'No Name' : dataUser.name}
+              {dataUser.name ?? 'No Name'}
             </TextName>
-            <TextLogin>@{dataUser.login}</TextLogin>
+            <View>
+            <TextLogin ellipsizeMode="tail" numberOfLines={1}>@{dataUser.login}</TextLogin>
             <ViewRowGap>
               <Feather name="map-pin" size={16} color="white" />
-              <TextLocation ellipsizeMode="tail" numberOfLines={2}>
+              <TextLocation ellipsizeMode="tail" numberOfLines={1}>
                 {!dataUser.location ? 'No Location' : dataUser.location}
               </TextLocation>
             </ViewRowGap>
+            </View>
           </ViewCardUser>
 
           <ViewStatics>
-            <Statics title="Repositories" text="50" />
-            <Statics title="Followers" text="11247" />
-            <Statics title="Following" text="38" />
+            <Statics title='Repositories' text={dataUser.public_repos} />
+            <Statics title='Followers' text={dataUser.followers} />
+            <Statics title='Following' text={dataUser.following} />
           </ViewStatics>
 
           <ViewColumn>
@@ -84,7 +99,7 @@ export const User = () => {
               <Title>Repositories</Title>
             </ViewBoxRepos>
           </ViewColumn>
-          {dataRepos.length >= 0 && (
+          {dataRepos && (
             <FlatList
               style={{ maxHeight: 480 }}
               data={dataRepos}
@@ -108,7 +123,7 @@ export const User = () => {
         <Modal visible={showModal} transparent={true}>
           <ModalLink
             showModal={() => setShowModal(false)}
-            link={modalRepo?.name}
+            link={modalRepo?.link}
             repoName={modalRepo?.name}
           />
         </Modal>
@@ -127,6 +142,11 @@ const SafeAreaView = styled.SafeAreaView`
 
 const MainView = styled.View`
   width: 95%;
+  gap: 8px;
+`;
+
+const View = styled.View`
+  width: 125px;
   gap: 8px;
 `;
 
@@ -168,14 +188,13 @@ const Avatar = styled.Image`
 `;
 
 const TextName = styled.Text`
-  max-width: 100px;
-  font-size: 16px;
+  max-width: 110px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
 `;
 
 const TextLogin = styled.Text`
-  font-size: 14px;
   color: ${colors.primary};
 `;
 
@@ -186,16 +205,14 @@ const ViewRowGap = styled.View`
 `;
 
 const TextLocation = styled.Text`
-  width: 75px;
-  font-size: 12px;
   color: white;
 `;
 
 const ViewCardUser = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  gap: 30px
 `;
 
 const ViewStatics = styled.View`
