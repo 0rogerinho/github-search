@@ -14,7 +14,7 @@ interface IModalLinkProps {
 export const ModalLink = ({link, repoName, showModal}:IModalLinkProps) => {
   const handleLinkPress = () => {
     console.log(link);
-    
+    showModal()
     Linking.openURL(link);
   };
 
