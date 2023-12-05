@@ -44,6 +44,7 @@ export const User = () => {
   );
 
   const navigation = useNavigation<INavigationProps>();
+  
   const {
     params: { dataUser, dataRepos },
   } = useRoute<IUserRouteProps>();

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "search-github",
-    "slug": "search-github",
+    "name": "Github Finder",
+    "slug": "GHF",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#141D2F"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,11 +20,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#141D2F"
+      },
+      "package": "com.devrogerinho.githubfinder"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a0918452-2c5d-4c0d-9a8d-03cc1ee75243"
+      }
     }
   }
 }
